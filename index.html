@@ -1,0 +1,91 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="dummy-data.js"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <title>Select Filters UI</title>
+</head>
+
+<body class="bg-gray-200">
+    <div class="bg-white p-4 rounded-md shadow-md w-full" x-data=" { 
+            selectedCategory: null,
+            selectedBrand: null,
+            selectedColor: null,
+            categories: dummyData.categories,
+            brands: dummyData.brands,
+            colors: dummyData.colors,
+            filteredProducts: [],
+            allProducts: dummyData.products,
+            filterProduct: function() {
+                if (!this.selectedCategory && !this.selectedBrand && !this.selectedColor) {
+                    this.filteredProducts = this.allProducts;
+                } else {
+                    this.filteredProducts = this.allProducts.filter(function (product) {
+                        return (!this.selectedCategory || product.category === this.selectedCategory) &&
+                            (!this.selectedBrand || product.brand === this.selectedBrand) &&
+                            (!this.selectedColor || product.color === this.selectedColor);
+                    }.bind(this));
+
+                    this.selectedCategory = this.selectedBrand = this.selectedColor = null;
+                }
+            }
+        }" x-init="filterProduct()">
+        <div class="flex items-center gap-5">
+            <select x-model="selectedCategory" class="border rounded-md px-4 py-2">
+                <option value="">Please select Category</option>
+                <template x-for="(category, index) in categories" :key="index" class="bg-white p-4 rounded-md">
+                    <option x-text="category"></option>
+                </template>
+            </select>
+
+            <select x-model="selectedBrand" class="border rounded-md px-4 py-2">
+                <option value="">Please select brand</option>
+                <template x-for="(brand, index) in brands" :key="index" class="bg-white p-4 rounded-md">
+                    <option x-text="brand"></option>
+                </template>
+            </select>
+
+            <select x-model="selectedColor" class="border rounded-md px-4 py-2">
+                <option value="">Please select color</option>
+                <template x-for="(color, index) in colors" :key="index" class="bg-white p-4 rounded-md">
+                    <option x-text="color"></option>
+                </template>
+            </select>
+
+            <!-- Filter Button -->
+            <button x-on:click="filterProduct()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Filter</button>
+        </div>
+
+        <!-- Product Placeholder Grid List -->
+        <div x-if="filteredProducts.length > 0" class="mt-8 grid grid-cols-2">
+            <template x-for="(product, index) in filteredProducts" :key="index" class="bg-white p-4 rounded-md">
+                <div class="flex gap-3">
+                    <div>
+                        <img :src="product.url" alt="product.name" class="w-[150px] h-[150px]">
+                    </div>
+                    <div>
+                        <div>Title : <span x-text="product.name"></span>
+                        </div>
+                        <div>Category : <span x-text="product.category"></span>
+                        </div>
+                        <div>Brand : <span x-text="product.brand"></span>
+                        </div>
+                        <div>Color : <span x-text="product.color"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div x-else>
+            No products found!
+        </div>
+    </div>
+</body>
+
+</html>
